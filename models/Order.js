@@ -1,16 +1,20 @@
 const mongoose = require("mongoose");
 
 const ItemSchema = new mongoose.Schema({
-  productId: Number,
-  quantity: Number,
-  price: Number,
+  productId: { type: Number, required: true },
+  quantity: { type: Number, required: true, min: 1 },
+  price: { type: Number, required: true, min: 0 },
 });
 
 const OrderSchema = new mongoose.Schema({
-  orderId: String,
-  value: Number,
-  creationDate: Date,
-  items: [ItemSchema],
+  orderId: { type: String, required: true, unique: true, index: true },
+  value: { type: Number, required: true, min: 0 },
+  creationDate: { type: Date, required: true },
+  items: {
+    type: [ItemSchema],
+    required: true,
+    validate: [(v) => v.length > 0, "items nao pode ser vazio"],
+  },
 });
 
 module.exports = mongoose.model("Order", OrderSchema);
