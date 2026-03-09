@@ -6,12 +6,17 @@ const { app, connectDB } = require("./src/app");
 const port = process.env.PORT || 3000;
 const retryDelayMs = 5000;
 
-// Sobe a API na porta definida no .env ou 3000.
+/**
+ * Inicia o servidor HTTP na porta configurada por ambiente.
+ */
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-// Tenta conectar no banco e faz retry se falhar.
+/**
+ * Tenta conectar no MongoDB e agenda nova tentativa em caso de falha.
+ * @returns {Promise<void>}
+ */
 async function startMongoConnection() {
   try {
     await connectDB();

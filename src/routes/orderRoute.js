@@ -5,7 +5,9 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
-// Todas as rotas de pedido exigem token JWT.
+/**
+ * Aplica autenticacao JWT para todas as rotas de pedido.
+ */
 router.use(auth);
 
 // Cria pedido.
