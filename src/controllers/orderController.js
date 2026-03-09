@@ -21,8 +21,10 @@ function mapItems(items) {
  */
 exports.createOrder = async (req, res) => {
   try {
+    // Pega os campos que precisamos do body
     const { numeroPedido, valorTotal, dataCriacao, items } = req.body || {};
 
+    // Valida se os campos obrigatorios vieram no payload
     if (!numeroPedido || valorTotal === undefined || !dataCriacao || !items) {
       return res.status(400).json({
         message:
@@ -30,12 +32,14 @@ exports.createOrder = async (req, res) => {
       });
     }
 
+    // Garante que items seja um array com pelo menos 1 item
     if (!Array.isArray(items) || items.length === 0) {
       return res
         .status(400)
         .json({ message: "'items' deve ser um array com itens." });
     }
 
+    // Mapeia os nomes do payload para os campos usados no banco
     const mapped = {
       orderId: String(numeroPedido),
       value: Number(valorTotal),
@@ -43,14 +47,17 @@ exports.createOrder = async (req, res) => {
       items: mapItems(items),
     };
 
+    // Cria o pedido no banco
     const order = await Order.create(mapped);
     return res.status(201).json(order);
   } catch (error) {
+    // Trata erro de chave unica (pedido duplicado)
     if (error.code === 11000) {
       return res.status(409).json({
         message: "Ja existe um pedido com este numero.",
       });
     }
+    // Erro generico de servidor
     return res
       .status(500)
       .json({ message: "Erro ao criar pedido", error: error.message });
@@ -102,32 +109,42 @@ exports.listOrders = async (_req, res) => {
  */
 exports.updateOrder = async (req, res) => {
   try {
+    // Pega o body e evita erro caso venha vazio
     const body = req.body || {};
+
+    // Se nao veio nada para atualizar, retorna erro
     if (Object.keys(body).length === 0) {
       return res
         .status(400)
         .json({ message: "Envie um JSON com dados para atualizar." });
     }
 
+    // Objeto que vai receber so os campos permitidos
     const updateData = {};
 
+    // Atualiza valor total se vier no payload
     if (body.valorTotal !== undefined) {
       updateData.value = Number(body.valorTotal);
     }
 
+    // Atualiza data de criacao se vier no payload
     if (body.dataCriacao !== undefined) {
       updateData.creationDate = new Date(body.dataCriacao);
     }
 
+    // Atualiza itens se vier no payload
     if (body.items !== undefined) {
+      // Valida se items eh um array com pelo menos 1 item
       if (!Array.isArray(body.items) || body.items.length === 0) {
         return res
           .status(400)
           .json({ message: "'items' deve ser um array com itens." });
       }
+      // Converte os itens para o formato salvo no banco
       updateData.items = mapItems(body.items);
     }
 
+    // Se nenhum campo valido foi enviado, retorna erro
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
         message:
@@ -135,26 +152,32 @@ exports.updateOrder = async (req, res) => {
       });
     }
 
+    // Busca pelo orderId da rota e atualiza os campos permitidos
     const updatedOrder = await Order.findOneAndUpdate(
       { orderId: req.params.id },
       updateData,
       {
+        // Retorna o documento ja atualizado
         new: true,
+        // Garante validacoes do schema no update
         runValidators: true,
       },
     );
 
+    // Se nao encontrou o pedido, retorna 404
     if (!updatedOrder) {
       return res.status(404).json({ message: "Pedido nao encontrado" });
     }
 
     return res.status(200).json(updatedOrder);
   } catch (error) {
+    // Trata erro de chave unica (caso de duplicidade)
     if (error.code === 11000) {
       return res.status(409).json({
         message: "Ja existe um pedido com este numero.",
       });
     }
+    // Erro generico no processo de atualizacao
     return res
       .status(500)
       .json({ message: "Erro ao atualizar pedido", error: error.message });
