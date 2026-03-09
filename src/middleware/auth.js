@@ -3,7 +3,14 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_jwt_secret";
 
-// Middleware que valida o token JWT no header Authorization.
+/**
+ * Middleware de autenticacao JWT.
+ * Valida o token do cabecalho Authorization e disponibiliza o usuario em req.user.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ * @returns {import("express").Response|void}
+ */
 module.exports = function auth(req, res, next) {
   const authHeader = req.headers.authorization;
 

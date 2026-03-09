@@ -1,7 +1,10 @@
-// (Documentação automaticamente gerada pelo Copilot)
 const Order = require("../models/Order");
 
-// Converte os itens do formato de entrada para o formato salvo no banco.
+/**
+ * Converte os itens recebidos no payload para o formato persistido no banco.
+ * @param {Array<{idItem: string|number, quantidadeItem: string|number, valorItem: string|number}>} items
+ * @returns {Array<{productId: number, quantity: number, price: number}>}
+ */
 function mapItems(items) {
   return items.map((item) => ({
     productId: Number(item.idItem),
@@ -10,7 +13,12 @@ function mapItems(items) {
   }));
 }
 
-// Cria um pedido novo.
+/**
+ * Cria um novo pedido a partir dos dados enviados no corpo da requisicao.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response>}
+ */
 exports.createOrder = async (req, res) => {
   try {
     const { numeroPedido, valorTotal, dataCriacao, items } = req.body || {};
@@ -49,7 +57,12 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// Busca um pedido pelo numero do pedido (orderId).
+/**
+ * Busca um pedido pelo identificador informado na rota.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response>}
+ */
 exports.getOrder = async (req, res) => {
   try {
     const order = await Order.findOne({ orderId: req.params.id });
@@ -64,7 +77,12 @@ exports.getOrder = async (req, res) => {
   }
 };
 
-// Lista todos os pedidos.
+/**
+ * Lista todos os pedidos cadastrados.
+ * @param {import("express").Request} _req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response>}
+ */
 exports.listOrders = async (_req, res) => {
   try {
     const orders = await Order.find();
@@ -76,7 +94,12 @@ exports.listOrders = async (_req, res) => {
   }
 };
 
-// Atualiza campos permitidos do pedido.
+/**
+ * Atualiza campos permitidos de um pedido existente.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response>}
+ */
 exports.updateOrder = async (req, res) => {
   try {
     const body = req.body || {};
@@ -138,7 +161,12 @@ exports.updateOrder = async (req, res) => {
   }
 };
 
-// Remove o pedido pelo numero do pedido.
+/**
+ * Remove um pedido pelo identificador da rota.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response|void>}
+ */
 exports.deleteOrder = async (req, res) => {
   try {
     const deletedOrder = await Order.findOneAndDelete({

@@ -7,7 +7,12 @@ const User = require("../models/User");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev_jwt_secret";
 
-// Registra um usuario novo com senha criptografada.
+/**
+ * Registra um novo usuario com senha criptografada.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response>}
+ */
 router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body || {};
@@ -34,7 +39,12 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Faz login e retorna token JWT.
+/**
+ * Autentica o usuario e retorna um token JWT valido por 1 hora.
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns {Promise<import("express").Response>}
+ */
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body || {};
