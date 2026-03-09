@@ -8,6 +8,12 @@ const orderRoutes = require("./routes/orderRoute");
 
 app.use("/order", orderRoutes);
 
-mongoose.connect("mongodb://localhost:27017/orders");
+const mongoUri = "mongodb://127.0.0.1:27017/orders";
 
-module.exports = app;
+async function connectDB() {
+  await mongoose.connect(mongoUri, {
+    serverSelectionTimeoutMS: 5000,
+  });
+}
+
+module.exports = { app, connectDB };
