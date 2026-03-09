@@ -1,12 +1,17 @@
-const { app, connectDB } = require("./app");
+// (Documentação automaticamente gerada pelo Copilot)
+require("dotenv").config();
+
+const { app, connectDB } = require("./src/app");
 
 const port = process.env.PORT || 3000;
 const retryDelayMs = 5000;
 
+// Sobe a API na porta definida no .env ou 3000.
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
+// Tenta conectar no banco e faz retry se falhar.
 async function startMongoConnection() {
   try {
     await connectDB();

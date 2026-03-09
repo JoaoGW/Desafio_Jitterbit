@@ -1,6 +1,8 @@
+// (Documentação automaticamente gerada pelo Copilot)
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
+
+const app = express();
 
 app.use(express.json());
 
@@ -10,9 +12,9 @@ const authRoutes = require("./routes/authRoute");
 app.use("/order", orderRoutes);
 app.use("/auth", authRoutes);
 
-const mongoUri = "mongodb://127.0.0.1:27017/orders";
-
+// Funcao simples para conectar no MongoDB.
 async function connectDB() {
+  const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/orders";
   await mongoose.connect(mongoUri, {
     serverSelectionTimeoutMS: 5000,
   });
